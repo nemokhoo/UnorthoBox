@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
@@ -56,8 +57,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(AuthResult authResult) {
                 Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                finish();
+                FirebaseUser user = auth.getCurrentUser();
+                updateUI(user);
             }
         });
+    }
+
+    public void updateUI(FirebaseUser currentUser) {
+        Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+        HomeIntent.putExtra("email", currentUser.getEmail());
+        System.out.println("email: " + currentUser.getEmail());
+        startActivity(HomeIntent);
     }
 }
