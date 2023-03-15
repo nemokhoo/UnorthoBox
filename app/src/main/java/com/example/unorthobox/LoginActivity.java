@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+//Uwah test comment
 public class LoginActivity extends AppCompatActivity {
 
     EditText emailText, passwordText;
