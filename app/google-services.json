@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "114991187213",
+    "firebase_url": "https://unorthobox-390f0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "unorthobox-390f0",
+    "storage_bucket": "unorthobox-390f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114991187213:android:51b5ea53fedb54b2981c44",
+        "android_client_info": {
+          "package_name": "com.example.unorthobox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "114991187213-gvqno322svgfeitsaj2i937rg3rkbejq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAt-BYMuEMudGaNivv1BML_oQBy1Idqjv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "114991187213-gvqno322svgfeitsaj2i937rg3rkbejq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

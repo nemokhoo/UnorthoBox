@@ -20,6 +20,7 @@ public class StartActivity extends AppCompatActivity {
 
         registrationButton = findViewById(R.id.registerButton);
         registrationButton.setOnClickListener(view -> toRegister());
+
     }
 
     private void toLogin() {

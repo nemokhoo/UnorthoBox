@@ -22,6 +22,8 @@ public class HomeActivity extends AppCompatActivity {
     ImageView lockButton, OTPButton, backButton, newMessageButton, userButton, homeButton;
 
     TextView boxIDView;
+
+    boolean lock_status = true;
     private static final String USERS = "Users";
 
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -78,11 +80,21 @@ public class HomeActivity extends AppCompatActivity {
 
     private void lock(){
         Context context = getApplicationContext();
-        CharSequence text = "Locked!";
-        int duration = Toast.LENGTH_SHORT;
+//        CharSequence text = "Locked!";
+//        int duration = Toast.LENGTH_SHORT;
+//
+//        Toast toast = Toast.makeText(context, text, duration);
+//        toast.show();
 
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        MqttConnection mqttInstance = MqttConnection.getInstance(context);
+        if(lock_status){
+            mqttInstance.publish("Unorthobox", "unlock", context);
+        }
+        else{
+            mqttInstance.publish("Unorthobox", "lock", context);
+        }
+
+        lock_status = !lock_status;
     }
 
     private void toOTP(){
