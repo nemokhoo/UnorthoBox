@@ -10,7 +10,7 @@ const char * BROKER = "broker.emqx.io";
 const int BROKER_PORT = 1883;
 const char * READ_TOPIC = "Unorthobox";
 
-iFiClient espClient;
+WiFiClient espClient;
 PubSubClient client(espClient);
 
 #define MSG_BUFFER_SIZE  (50)
@@ -67,10 +67,8 @@ void reconnect() {
 
     if(client.connect(clientId.c_str())) {
       Serial.println("connected");
-      client.publish(READ_TOPIC, "Hello! Hospital is up and running!");
+      client.publish(READ_TOPIC, "Hello! Unorthobox is up and running!");
       client.subscribe(READ_TOPIC);
-      client.subscribe(READ_TOPIC_BACKEND_DEVICE1);
-      client.subscribe(READ_TOPIC_BACKEND_HOSPITAL);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -96,15 +94,13 @@ void callback(char *topic, byte *payload, unsigned int length) { //Sets the call
     }
     else if(message == "lock"){
       //Turn it on
-      digitalWrite(PIN_LED, HIGH)
+      digitalWrite(PIN_LED, HIGH);
     }
     
 }
 
 void setup(){
   Serial.begin(115200);
-  
-  setup_pins(); //Setup pins
   setup_wifi(); //Setup wifi
   client.setServer(BROKER, BROKER_PORT);
   client.setCallback(callback);
