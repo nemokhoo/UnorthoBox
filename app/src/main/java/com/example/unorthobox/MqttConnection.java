@@ -13,9 +13,7 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 
 public class MqttConnection {
     private static MqttConnection instance = null;
-    private static MqttConnectionOptions connOpts;
     private static MqttAsyncClient userClient;
-    private static IMqttToken token;
     private static final int qos             = 1;
     private static final String broker       = "tcp://broker.emqx.io:1883";
     private static final String clientId     = "AndroidApp";
@@ -42,9 +40,9 @@ public class MqttConnection {
      * @param context The application context. This is to print exception errors in the app's toast.
      * After reconsideration, this method is now made private, so idk if this comment is still useful
      */
-    private static void connect(Context context){
+    private void connect(Context context){
         try{
-            connOpts = new MqttConnectionOptions();
+            MqttConnectionOptions connOpts = new MqttConnectionOptions();
             connOpts.setCleanStart(false);
             userClient = new MqttAsyncClient(broker, clientId, persistence);
 //            System.out.println("Connecting to broker: " + broker);
@@ -67,7 +65,7 @@ public class MqttConnection {
 //            System.out.println("Publishing message: "+content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
-            token = userClient.publish(topic, message);
+            IMqttToken token = userClient.publish(topic, message);
 //            token.waitForCompletion(); //Don't spam the button thx
         } catch(MqttException me){
             exceptionMessage(me, context);

@@ -16,7 +16,7 @@ PubSubClient client(espClient);
 #define MSG_BUFFER_SIZE  (50)
 char msg_to_publish[MSG_BUFFER_SIZE];
 
-#define PIN_LED D1
+#define PIN_LED D2
 
 bool IsEqualCommand(byte * payload, char * command){
   int count = 0;
@@ -90,10 +90,12 @@ void callback(char *topic, byte *payload, unsigned int length) { //Sets the call
 
     if(message == "unlock"){
       //Turn off the LED
+      Serial.println("Unlocking... turning off");
       digitalWrite(PIN_LED, LOW);
     }
     else if(message == "lock"){
       //Turn it on
+      Serial.println("Locking.... turning on");
       digitalWrite(PIN_LED, HIGH);
     }
     
@@ -101,6 +103,8 @@ void callback(char *topic, byte *payload, unsigned int length) { //Sets the call
 
 void setup(){
   Serial.begin(115200);
+  pinMode(PIN_LED, OUTPUT);
+  digitalWrite(PIN_LED, HIGH);
   setup_wifi(); //Setup wifi
   client.setServer(BROKER, BROKER_PORT);
   client.setCallback(callback);
