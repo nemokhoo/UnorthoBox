@@ -3,6 +3,9 @@ package com.example.unorthobox;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -88,6 +91,7 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(new Intent(HomeActivity.this, StartActivity.class));
         }
     }
+
     private void lock(){
         Context context = getApplicationContext();
 //        CharSequence text = "Locked!";
