@@ -55,23 +55,7 @@ public class MessageActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater =getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logout:
-            {
-                mAuth.signOut();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 
 }

@@ -32,13 +32,7 @@ public class OTPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submitotp_page);
 
-        newMessageButton = findViewById(R.id.otpNewMessage);
-        userButton = findViewById(R.id.otpUser);
-        homeButton = findViewById(R.id.otpHome);
 
-        newMessageButton.setOnClickListener(view -> toMessages());
-        userButton.setOnClickListener(view -> toUser());
-        homeButton.setOnClickListener(view -> toHome());
 
         submitButton = findViewById(R.id.submitOTPButton);
         generateButton = findViewById(R.id.generateOTPButton);

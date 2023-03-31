@@ -3,6 +3,7 @@ package com.example.unorthobox;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,8 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.unorthobox.databinding.HomePageBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,62 +41,137 @@ public class HomeActivity extends AppCompatActivity {
     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     DatabaseReference userRef = rootRef.child(USERS);
     FirebaseAuth mAuth;
-
+    HomePageBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_page);
+        HomeFragments homeFragment = new HomeFragments();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.frameLayout2, homeFragment)
+                .commit();
+//        setContentView(R.layout.home_page);
+//
+//        boxIDView = findViewById(R.id.boxIDshow);
+//
+//        Intent intent = getIntent();
+//        String email = intent.getStringExtra("email");
+//
+//
+//        lockButton = findViewById(R.id.lockButton);
+//        OTPButton = findViewById(R.id.otpButton);
+//        backButton = findViewById(R.id.homeBack);
+//
+//        newMessageButton = findViewById(R.id.homeNewMessage);
+//        userButton = findViewById(R.id.homeUser);
+//        homeButton = findViewById(R.id.homeHome);
+//
+//        lockButton.setOnClickListener(view -> lock());
+//        backButton.setOnClickListener(view -> finish());
+//        OTPButton.setOnClickListener(view -> toOTP());
+//
+//        newMessageButton.setOnClickListener(view -> toNotifications());
+//        userButton.setOnClickListener(view -> toUser());
+//        homeButton.setOnClickListener(view -> toHome());
+//        mAuth= FirebaseAuth.getInstance();
+//
+//
+//
+//        userRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                System.out.println("------------going through?---------" + email);
+//                for(DataSnapshot ds: snapshot.getChildren()) {
+//                    if (ds.child("email").getValue().toString().equals(email)) {
+//                        System.out.println("-----------YES IT WORKED?!----------");
+//                        boxIDView.setText(ds.child("boxID").getValue(String.class));
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+        binding = HomePageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        boxIDView = findViewById(R.id.boxIDshow);
-
-        Intent intent = getIntent();
-        String email = intent.getStringExtra("email");
-
-
-        lockButton = findViewById(R.id.lockButton);
-        OTPButton = findViewById(R.id.otpButton);
-        backButton = findViewById(R.id.homeBack);
-
-        newMessageButton = findViewById(R.id.homeNewMessage);
-        userButton = findViewById(R.id.homeUser);
-        homeButton = findViewById(R.id.homeHome);
-
-        lockButton.setOnClickListener(view -> lock());
-        backButton.setOnClickListener(view -> finish());
-        OTPButton.setOnClickListener(view -> toOTP());
-
-        newMessageButton.setOnClickListener(view -> toNotifications());
-        userButton.setOnClickListener(view -> toUser());
-        homeButton.setOnClickListener(view -> toHome());
-        mAuth= FirebaseAuth.getInstance();
-
-
-
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                System.out.println("------------going through?---------" + email);
-                for(DataSnapshot ds: snapshot.getChildren()) {
-                    if (ds.child("email").getValue().toString().equals(email)) {
-                        System.out.println("-----------YES IT WORKED?!----------");
-                        boxIDView.setText(ds.child("boxID").getValue(String.class));
-                    }
-                }
+        binding.bottomNavigationView2.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.homefrag:
+                    replaceFragment(new HomeFragments());
+                    break;
+                case R.id.profile:
+                    replaceFragment(new NotificationFragment());
+                    break;
+                case R.id.Notification:
+                        replaceFragment(new ProfileFragment());
+                    break;
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            return true;
         });
+    }
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout2,fragment);
+        fragmentTransaction.commit();
+    }
 
-    }
-    public void onStart(){
-        super.onStart();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user==null){
-            startActivity(new Intent(HomeActivity.this, StartActivity.class));
-        }
-    }
+  // @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.home_page);
+//
+//        boxIDView = findViewById(R.id.boxIDshow);
+//
+//        Intent intent = getIntent();
+//        String email = intent.getStringExtra("email");
+//
+//
+//        lockButton = findViewById(R.id.lockButton);
+//        OTPButton = findViewById(R.id.otpButton);
+//        backButton = findViewById(R.id.homeBack);
+//
+//        newMessageButton = findViewById(R.id.homeNewMessage);
+//        userButton = findViewById(R.id.homeUser);
+//        homeButton = findViewById(R.id.homeHome);
+//
+//        lockButton.setOnClickListener(view -> lock());
+//        backButton.setOnClickListener(view -> finish());
+//        OTPButton.setOnClickListener(view -> toOTP());
+//
+//        newMessageButton.setOnClickListener(view -> toNotifications());
+//        userButton.setOnClickListener(view -> toUser());
+//        homeButton.setOnClickListener(view -> toHome());
+//        mAuth= FirebaseAuth.getInstance();
+//
+//
+//
+//        userRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                System.out.println("------------going through?---------" + email);
+//                for(DataSnapshot ds: snapshot.getChildren()) {
+//                    if (ds.child("email").getValue().toString().equals(email)) {
+//                        System.out.println("-----------YES IT WORKED?!----------");
+//                        boxIDView.setText(ds.child("boxID").getValue(String.class));
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//    }
+//    public void onStart(){
+//        super.onStart();
+//        FirebaseUser user = mAuth.getCurrentUser();
+//        if(user==null){
+//            startActivity(new Intent(HomeActivity.this, StartActivity.class));
+//        }
+//    }
 
     private void lock(){
         Context context = getApplicationContext();

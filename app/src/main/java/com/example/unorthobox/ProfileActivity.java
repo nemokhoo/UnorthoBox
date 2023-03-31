@@ -24,9 +24,6 @@ public class ProfileActivity extends AppCompatActivity {
         boxIdText = findViewById(R.id.editBoxID);
         backButton = findViewById(R.id.editBack);
 
-        newMessageButton = findViewById(R.id.editNewMessage);
-        userButton = findViewById(R.id.editUser);
-        homeButton = findViewById(R.id.editHome);
 
         newMessageButton.setOnClickListener(view -> toNotifications());
         userButton.setOnClickListener(view -> toUser());

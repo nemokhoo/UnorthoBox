@@ -134,17 +134,6 @@
         app:layout_constraintVertical_bias="1.0">
 
         <ImageView
-            android:id="@+id/deliveryNewMessage"
-            android:layout_width="41dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toStartOf="@+id/deliveryUser"
-            app:layout_constraintHorizontal_bias="0.513"
-            app:layout_constraintStart_toEndOf="@+id/deliveryAdd"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/new_message" />
-
-        <ImageView
             android:id="@+id/deliveryAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,16 +142,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/add_to_box" />
-
-        <ImageView
-            android:id="@+id/deliveryUser"
-            android:layout_width="45dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/user_page" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

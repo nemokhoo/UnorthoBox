@@ -19,9 +19,7 @@ public class NotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_page);
 
-        newMessageButton = findViewById(R.id.notificationNewMessage);
-        userButton = findViewById(R.id.notificationUser);
-        homeButton = findViewById(R.id.notificationHome);
+
         backButton = findViewById(R.id.notificationBack);
         chat = findViewById(R.id.samplePlaceholder);
 

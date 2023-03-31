@@ -28,49 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="#0074D9"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
-
-        <ImageView
-            android:id="@+id/notificationNewMessage"
-            android:layout_width="41dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toStartOf="@+id/notificationUser"
-            app:layout_constraintStart_toEndOf="@+id/notificationHome"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/new_message" />
-
-        <ImageView
-            android:id="@+id/notificationUser"
-            android:layout_width="45dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/user_page" />
-
-        <ImageView
-            android:id="@+id/notificationHome"
-            android:layout_width="49dp"
-            android:layout_height="41dp"
-            android:layout_marginStart="48dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/home" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/samplePlaceholder"
