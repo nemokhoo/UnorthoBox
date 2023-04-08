@@ -4,9 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -75,7 +80,11 @@ public class HomeFragments extends Fragment {
         }
 
     }
-
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,26 +106,50 @@ public class HomeFragments extends Fragment {
         });
         return view;
     }
+
+
     private void lock(){
-        Context context = getContext();
-        CharSequence text = "Locked!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-
-        MqttConnection mqttInstance = MqttConnection.getInstance(context);
-        if(lock_status){
-            mqttInstance.publish("Unorthobox", "unlock", context);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed out
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+            getActivity().finish(); // Optional: call finish() to
+            // User is signed out
         }
-        else{
-            mqttInstance.publish("Unorthobox", "lock", context);
-        }
-
-        lock_status = !lock_status;
+//        Context context = getContext();
+//        CharSequence text = "Locked!";
+//        int duration = Toast.LENGTH_SHORT;
+//
+//        Toast toast = Toast.makeText(context, text, duration);
+//        toast.show();
+//
+//        MqttConnection mqttInstance = MqttConnection.getInstance(context);
+//        if(lock_status){
+//            mqttInstance.publish("Unorthobox", "unlock", context);
+//        }
+//        else{
+//            mqttInstance.publish("Unorthobox", "lock", context);
+//        }
+//
+//        lock_status = !lock_status;
     }
     private void toOTP(){
-        Intent switchActivityIntent = new Intent(getActivity(), OTPActivity.class);
-        startActivity(switchActivityIntent);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed out
+            mAuth.signOut();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+            // User is signed out
+        }
+        else{
+            mAuth.signOut();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+        }
+
     }
 }

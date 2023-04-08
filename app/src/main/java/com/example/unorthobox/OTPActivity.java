@@ -31,9 +31,6 @@ public class OTPActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submitotp_page);
-
-
-
         submitButton = findViewById(R.id.submitOTPButton);
         generateButton = findViewById(R.id.generateOTPButton);
         backButton = findViewById(R.id.otpBack);
