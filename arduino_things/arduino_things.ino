@@ -1,14 +1,15 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <Servo.h>
 
 //WiFi
-const char * WIFI_SSID = "Loading Network SSID...";
-const char * WIFI_PASS = "too awesome";
+const char * WIFI_SSID = "AndroidAP700D";
+const char * WIFI_PASS = "pokemon123";
 
 //MQTT
 const char * BROKER = "broker.emqx.io";
 const int BROKER_PORT = 1883;
-const char * READ_TOPIC = "Unorthobox";
+const char * READ_TOPIC = "bee3";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -16,7 +17,8 @@ PubSubClient client(espClient);
 #define MSG_BUFFER_SIZE  (50)
 char msg_to_publish[MSG_BUFFER_SIZE];
 
-#define PIN_LED D2
+//Servo motor
+Servo servo;
 
 bool IsEqualCommand(byte * payload, char * command){
   int count = 0;
@@ -46,6 +48,7 @@ void setup_wifi() {
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
+  servo.attach(0);
 
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
@@ -89,22 +92,22 @@ void callback(char *topic, byte *payload, unsigned int length) { //Sets the call
     Serial.println(message);
 
     if(message == "unlock"){
-      //Turn off the LED
+      //Turn the servo to unlock box
       Serial.println("Unlocking... turning off");
-      digitalWrite(PIN_LED, LOW);
+      servo.write(180);
     }
     else if(message == "lock"){
-      //Turn it on
+      //Turn the servo to lock box
       Serial.println("Locking.... turning on");
-      digitalWrite(PIN_LED, HIGH);
+      servo.write(0);
     }
     
 }
 
 void setup(){
   Serial.begin(115200);
-  pinMode(PIN_LED, OUTPUT);
-  digitalWrite(PIN_LED, HIGH);
+  pinMode(0, OUTPUT);
+  digitalWrite(0, HIGH);
   setup_wifi(); //Setup wifi
   client.setServer(BROKER, BROKER_PORT);
   client.setCallback(callback);
