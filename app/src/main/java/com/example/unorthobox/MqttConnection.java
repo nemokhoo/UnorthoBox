@@ -74,8 +74,6 @@ public class MqttConnection {
 
     public void close(Context context){
         try{
-//            System.out.println("Disconnected");
-//            System.out.println("Close client.");
             userClient.close();
         } catch(MqttException me){
             exceptionMessage(me, context);

@@ -46,81 +46,16 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        HomeFragments homeFragment = new HomeFragments();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.frameLayout2, homeFragment)
-                .commit();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Optional: call finish() to prevent the user from returning to the MainActivity using the back button
+            finish();
+        } else {
+            checkUserRole();
         }
-//        setContentView(R.layout.home_page);
-//
-//        boxIDView = findViewById(R.id.boxIDshow);
-//
-//        Intent intent = getIntent();
-//        String email = intent.getStringExtra("email");
-//
-//
-//        lockButton = findViewById(R.id.lockButton);
-//        OTPButton = findViewById(R.id.otpButton);
-//        backButton = findViewById(R.id.homeBack);
-//
-//        newMessageButton = findViewById(R.id.homeNewMessage);
-//        userButton = findViewById(R.id.homeUser);
-//        homeButton = findViewById(R.id.homeHome);
-//
-//        lockButton.setOnClickListener(view -> lock());
-//        backButton.setOnClickListener(view -> finish());
-//        OTPButton.setOnClickListener(view -> toOTP());
-//
-//        newMessageButton.setOnClickListener(view -> toNotifications());
-//        userButton.setOnClickListener(view -> toUser());
-//        homeButton.setOnClickListener(view -> toHome());
-//        mAuth= FirebaseAuth.getInstance();
-//
-//
-//
-//        userRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                System.out.println("------------going through?---------" + email);
-//                for(DataSnapshot ds: snapshot.getChildren()) {
-//                    if (ds.child("email").getValue().toString().equals(email)) {
-//                        System.out.println("-----------YES IT WORKED?!----------");
-//                        boxIDView.setText(ds.child("boxID").getValue(String.class));
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-        binding = HomePageBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        binding.bottomNavigationView2.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()){
-                case R.id.homefrag:
-                    replaceFragment(new HomeFragments());
-                    break;
-                case R.id.profile:
-                    replaceFragment(new NotificationFragment());
-                    break;
-                case R.id.Notification:
-                        replaceFragment(new ProfileFragment());
-                    break;
-            }
-            return true;
-        });
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -128,14 +63,72 @@ public class HomeActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logout:{
-                mAuth.signOut();
+        switch (item.getItemId()) {
+            case R.id.logout: {
+                mAuth.signOut(); // Sign out the user
+
+                // Redirect the user to the login activity
+                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Remove the current activity from the back stack
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    public void checkUserRole() {
+        String userId = mAuth.getCurrentUser().getUid();
+        if (userId != null) {
+            DatabaseReference userRoleRef = FirebaseDatabase.getInstance().getReference("users/" + userId + "/role");
+            userRoleRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String userRole = dataSnapshot.getValue().toString();
+                        Intent intent;
+                        if ("user".equals(userRole)) {
+                            binding = HomePageBinding.inflate(getLayoutInflater());
+                            setContentView(binding.getRoot());
+                            replaceFragment(new HomeFragments());
+                            setSupportActionBar(binding.toolbar);
+
+                            binding.bottomNavigationView2.setOnItemSelectedListener(item -> {
+                                switch (item.getItemId()){
+                                    case R.id.homefrag:
+                                        replaceFragment(new HomeFragments());
+                                        break;
+                                    case R.id.profile:
+                                        replaceFragment(new NotificationFragment());
+                                        break;
+                                    case R.id.Notification:
+                                        replaceFragment(new ProfileFragment());
+                                        break;
+                                }
+                                return true;
+                            });
+                        } else if ("delivery".equals(userRole)) {
+                            intent = new Intent(HomeActivity.this, DeliverActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // Handle error (unknown role)
+                            return;
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle error
+                }
+            });
+        }
+    }
+
+
 
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -144,101 +137,10 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-  // @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.home_page);
-//
-//        boxIDView = findViewById(R.id.boxIDshow);
-//
-//        Intent intent = getIntent();
-//        String email = intent.getStringExtra("email");
-//
-//
-//        lockButton = findViewById(R.id.lockButton);
-//        OTPButton = findViewById(R.id.otpButton);
-//        backButton = findViewById(R.id.homeBack);
-//
-//        newMessageButton = findViewById(R.id.homeNewMessage);
-//        userButton = findViewById(R.id.homeUser);
-//        homeButton = findViewById(R.id.homeHome);
-//
-//        lockButton.setOnClickListener(view -> lock());
-//        backButton.setOnClickListener(view -> finish());
-//        OTPButton.setOnClickListener(view -> toOTP());
-//
-//        newMessageButton.setOnClickListener(view -> toNotifications());
-//        userButton.setOnClickListener(view -> toUser());
-//        homeButton.setOnClickListener(view -> toHome());
-//        mAuth= FirebaseAuth.getInstance();
-//
-//
-//
-//        userRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                System.out.println("------------going through?---------" + email);
-//                for(DataSnapshot ds: snapshot.getChildren()) {
-//                    if (ds.child("email").getValue().toString().equals(email)) {
-//                        System.out.println("-----------YES IT WORKED?!----------");
-//                        boxIDView.setText(ds.child("boxID").getValue(String.class));
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//
-//    }
-//    public void onStart(){
-//        super.onStart();
-//        FirebaseUser user = mAuth.getCurrentUser();
-//        if(user==null){
-//            startActivity(new Intent(HomeActivity.this, StartActivity.class));
-//        }
-//    }
 
-    private void lock(){
-        Context context = getApplicationContext();
-//        CharSequence text = "Locked!";
-//        int duration = Toast.LENGTH_SHORT;
-//
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
 
-        MqttConnection mqttInstance = MqttConnection.getInstance(context);
-        if(lock_status){
-            mqttInstance.publish("Unorthobox", "unlock", context);
-        }
-        else{
-            mqttInstance.publish("Unorthobox", "lock", context);
-        }
 
-        lock_status = !lock_status;
-    }
 
-    private void toOTP(){
-        Intent switchActivityIntent = new Intent(this, OTPActivity.class);
-        startActivity(switchActivityIntent);
-    }
 
-    private void toNotifications(){
-        Intent switchActivityIntent = new Intent(this, NotificationActivity.class);
-        startActivity(switchActivityIntent);
-    }
-    private void toHome(){
-        Context context = getApplicationContext();
-        CharSequence text = "You are already home!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-    private void toUser(){
-        Intent switchActivityIntent = new Intent(this, ProfileActivity.class);
-        startActivity(switchActivityIntent);
-    }
 
 }

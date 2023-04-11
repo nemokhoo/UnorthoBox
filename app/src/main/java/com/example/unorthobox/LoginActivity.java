@@ -59,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "You did not enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+
                 loginUser(txt_email,txt_password);
             }
         });
@@ -71,8 +73,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    System.out.println(user.boxID);
-                    navigateToRoleSpecificActivity(user.boxID);
+                    System.out.println(user.role);
+
+                    navigateToRoleSpecificActivity(user.role);
                 } else {
                     // Handle error (user not found in the database)
                 }
@@ -105,7 +108,10 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void loginUser(String email, String password) {
 
+
         if(email!=null && password!=null){
+
+
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -124,10 +130,4 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void updateUI(FirebaseUser currentUser) {
-        Intent HomeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-        HomeIntent.putExtra("email", currentUser.getEmail());
-        System.out.println("email: " + currentUser.getEmail());
-        startActivity(HomeIntent);
-    }
 }

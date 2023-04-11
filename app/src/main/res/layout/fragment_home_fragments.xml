@@ -10,28 +10,50 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
+
+        <Button
             android:id="@+id/otpBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#FFFFFF"
-            android:contentDescription="OTP"
-            android:src="@drawable/otp_button"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="108dp"
+            android:layout_marginEnd="100dp"
+            android:width="200dp"
+            android:height="200dp"
+            android:text="1"
+            android:textSize="96sp"
+            app:cornerRadius="100dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.443"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/lockBtn"
+        <TextView
+            android:id="@+id/otpText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="42dp"
-            android:layout_marginEnd="115dp"
-            android:src="@drawable/unlock_button"
+            android:layout_marginTop="44dp"
+            android:text="Null"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/otpBtn" />
+
+        <Button
+            android:id="@+id/lockBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="92dp"
+            android:width="200dp"
+            android:height="200dp"
+            android:text="Unlock"
+            android:textSize="34sp"
+            app:cornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/otpBtn" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

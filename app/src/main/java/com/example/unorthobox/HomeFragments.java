@@ -1,5 +1,6 @@
 package com.example.unorthobox;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,20 +9,31 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +47,7 @@ public class HomeFragments extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    ImageButton lockButton, OTPButton, backButton, newMessageButton, userButton, homeButton;
+    Button lockButton, OTPButton;
 
     TextView boxIDView;
 
@@ -48,7 +60,10 @@ public class HomeFragments extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private String currentOtpKey;
+    private int currentOtp;
+    private DatabaseReference otpReference;
+    private TextView textView;
     public HomeFragments() {
         // Required empty public constructor
     }
@@ -80,76 +95,114 @@ public class HomeFragments extends Fragment {
         }
 
     }
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_fragments, container, false);
       lockButton =  view.findViewById(R.id.lockBtn);
         OTPButton = view.findViewById(R.id.otpBtn);
+        textView= view.findViewById(R.id.otpText);
 
+        otpReference = FirebaseDatabase.getInstance().getReference("otps");
         lockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lock();
+                getUserEmail();
             }
         });
         OTPButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toOTP();
+                generateAndStoreOTP();
             }
         });
         return view;
     }
 
+    private void lock(String topic){
 
-    private void lock(){
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            // User is signed out
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
-            getActivity().finish(); // Optional: call finish() to
-            // User is signed out
-        }
-//        Context context = getContext();
-//        CharSequence text = "Locked!";
-//        int duration = Toast.LENGTH_SHORT;
-//
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
-//
-//        MqttConnection mqttInstance = MqttConnection.getInstance(context);
-//        if(lock_status){
-//            mqttInstance.publish("Unorthobox", "unlock", context);
-//        }
-//        else{
-//            mqttInstance.publish("Unorthobox", "lock", context);
-//        }
-//
-//        lock_status = !lock_status;
-    }
-    private void toOTP(){
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            // User is signed out
-            mAuth.signOut();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
-            // User is signed out
+        Context context = getContext();
+        CharSequence text = "Locked!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+        MqttConnection mqttInstance = MqttConnection.getInstance(context);
+        if(lock_status){
+            mqttInstance.publish(topic, "unlock", context);
         }
         else{
-            mAuth.signOut();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
+            mqttInstance.publish(topic, "lock", context);
         }
 
+        lock_status = !lock_status;
     }
+    private void getUserEmail() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userEmailRef = database.getReference("users/" + getCurrentUserId() + "/boxID");
+        userEmailRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lock(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+    }
+
+    private String getCurrentUserId() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getUid();
+        }
+        return null;
+    }
+    public void generateAndStoreOTP() {
+        String userId = getCurrentUserId();
+
+        getUserBoxID(new BoxIDCallback() {
+            @Override
+            public void onCallback(String boxID) {
+                int otp = new Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
+                long currentTimeMillis = System.currentTimeMillis();
+                long expirationTimeMillis = currentTimeMillis + (5 * 60 * 1000); // 5 minutes from now
+                textView.setText(Integer.toString(otp));
+                Map<String, Object> otpData = new HashMap<>();
+                otpData.put("otp", otp);
+                otpData.put("expiration", expirationTimeMillis);
+                otpData.put("boxID", boxID);
+                otpReference.child(userId).setValue(otpData);
+                Toast.makeText(getContext(), "OTP generated and stored.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void getUserBoxID(BoxIDCallback boxIDCallback) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userEmailRef = database.getReference("users/" + getCurrentUserId() + "/boxID");
+        userEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String boxID = dataSnapshot.getValue().toString();
+                boxIDCallback.onCallback(boxID);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    interface BoxIDCallback {
+        void onCallback(String boxID);
+    }
+
 }

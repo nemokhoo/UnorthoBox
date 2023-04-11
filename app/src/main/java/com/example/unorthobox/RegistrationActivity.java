@@ -50,6 +50,7 @@ public class RegistrationActivity extends AppCompatActivity{
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 determineRoleAndRegister(boxIdText.getText().toString());
 //                String txt_email = emailText.getText().toString();
 //                String txt_password = passwordText.getText().toString();
@@ -96,7 +97,7 @@ public class RegistrationActivity extends AppCompatActivity{
     }
 
     private void writeNewUser(String userId, String email, String role, String inputId) {
-        User user = new User(userId,email, role);
+        User user = new User(userId,email, inputId, role);
         DatabaseReference userRef = mDatabase.child("users").child(userId);
 
         userRef.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -119,6 +120,7 @@ public class RegistrationActivity extends AppCompatActivity{
     private void determineRoleAndRegister(String inputId) {
         DatabaseReference boxIdRef = FirebaseDatabase.getInstance().getReference().child("boxIds");
         DatabaseReference deliveryIdRef = FirebaseDatabase.getInstance().getReference().child("deliveryIds");
+
         RegistrationCallback registrationCallback = new RegistrationCallback() {
             @Override
             public void onSuccess(String role, String inputId) {
